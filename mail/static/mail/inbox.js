@@ -41,23 +41,35 @@ function load_mailbox(mailbox) {
     mailbox.charAt(0).toUpperCase() + mailbox.slice(1)
   }</h3>`;
 
+  let emailID = " ";
+  let emailRecipient = " ";
+  let emailSender = " ";
+  let emailSubject = " ";
+  let emailBody = " ";
+  let mails = " ";
+
   fetch(`/emails/${mailbox}`)
     .then((response) => response.json())
     .then((email) => {
       for (let i = 0; i < email.length; i++) {
-        let emailID = email[i].id;
-        let emailRecipient = email[i].recipients[0];
-        let emailSender = email[i].sender;
-        let emailSubject = email[i].subject;
-        let emailBody = email[i].body;
-
-        console.log(email);
-        console.log(emailID);
-        console.log(emailRecipient);
-        console.log(emailSender);
-        console.log(emailSubject);
-        console.log(emailBody);
+        emailID = `${email[i].id} `;
+        emailRecipient = `${email[i].recipients[0]} `;
+        emailSender = `${email[i].sender} `;
+        emailSubject = `${email[i].subject}`;
+        emailBody = `${email[i].body}`;
+        emailTimestamp = `${email[i].timestamp}`;
+        mails += `<div> <li> Sender : ${emailSender} Subject: ${emailSubject} Time: ${emailTimestamp} </li> </div>`;
       }
+
+      let emailsEl = document.querySelector("#emails-view");
+      console.log(emailsEl);
+      emailsEl.innerHTML += mails;
+      // console.log(email);
+      // console.log(emailID);
+      // console.log(emailRecipient);
+      // console.log(emailSender);
+      // console.log(emailSubject);
+      // console.log(emailBody);
     });
 }
 
