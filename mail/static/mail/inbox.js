@@ -40,6 +40,25 @@ function load_mailbox(mailbox) {
   document.querySelector("#emails-view").innerHTML = `<h3>${
     mailbox.charAt(0).toUpperCase() + mailbox.slice(1)
   }</h3>`;
+
+  fetch(`/emails/${mailbox}`)
+    .then((response) => response.json())
+    .then((email) => {
+      for (let i = 0; i < email.length; i++) {
+        let emailID = email[i].id;
+        let emailRecipient = email[i].recipients[0];
+        let emailSender = email[i].sender;
+        let emailSubject = email[i].subject;
+        let emailBody = email[i].body;
+
+        console.log(email);
+        console.log(emailID);
+        console.log(emailRecipient);
+        console.log(emailSender);
+        console.log(emailSubject);
+        console.log(emailBody);
+      }
+    });
 }
 
 function send_mail(recipients, subject, body) {
@@ -55,7 +74,7 @@ function send_mail(recipients, subject, body) {
     .then((result) => {
       // Print result
       // alert(result.message);
-      console.log(result);
+      alert(result.error);
       load_mailbox("sent");
     })
     .catch((error) => {
