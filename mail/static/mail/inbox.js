@@ -41,28 +41,30 @@ function load_mailbox(mailbox) {
     mailbox.charAt(0).toUpperCase() + mailbox.slice(1)
   }</h3>`;
 
-  // let emailID = " ";
-  // let emailRecipient = " ";
-  // let emailSender = " ";
-  // let emailSubject = " ";
-  // let emailBody = " ";
+  let emailID = "";
+  let emailRecipient = "";
+  let emailSender = "";
+  let emailSubject = "";
+  let emailBody = "";
+  let emailTimestamp = "";
+
   let mails = " ";
 
   fetch(`/emails/${mailbox}`)
     .then((response) => response.json())
     .then((email) => {
       for (let i = 0; i < email.length; i++) {
-        const emailID = `${email[i].id} `;
-        const emailRecipient = `${email[i].recipients[0]} `;
-        const emailSender = `${email[i].sender} `;
-        const emailSubject = `${email[i].subject}`;
-        const emailBody = `${email[i].body}`;
-        const emailTimestamp = `${email[i].timestamp}`;
+        emailID = `${email[i].id} `;
+        emailRecipient = `${email[i].recipients[0]} `;
+        emailSender = `${email[i].sender} `;
+        emailSubject = `${email[i].subject}`;
+        emailBody = `${email[i].body}`;
+        emailTimestamp = `${email[i].timestamp}`;
         const isRead = email[i].read;
 
         const emailClass = isRead ? "read-email" : "unread-email";
 
-        mails += `<div class="mail-border ${emailClass}"> 
+        mails += `<div class="mail-border ${emailClass}" type="button" data-emailID ="${emailID}"> 
         <li>
         <span class="sender">${emailSender} </span>
         <span class="subject">${emailSubject} </span>
@@ -74,6 +76,14 @@ function load_mailbox(mailbox) {
       let emailsEl = document.querySelector("#emails-view");
       emailsEl.innerHTML += mails;
       console.log(email);
+
+      const allMails = document.querySelectorAll(".mail-border");
+      allMails.forEach((item) => {
+        item.addEventListener("click", () => {
+          emailID = item.getAttribute("data-emailID");
+          view_email(emailID);
+        });
+      });
     });
 }
 
@@ -99,3 +109,9 @@ function send_mail(recipients, subject, body) {
       alert(result.error);
     });
 }
+
+// function view_email(id, sender, recipient, subject, body, timestamp) {
+function view_email(id) {
+  console.log(id);
+}
+const mailInstance = document.querySelectorAll(".mail-border");
