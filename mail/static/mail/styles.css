@@ -41,3 +41,12 @@ background-color: lightgrey;
 .unread-email{
     background-color: white;
 }
+
+#meta-data{
+   padding-bottom: 0.25rem;
+
+}
+.title{
+    font-size: 18px;
+    font-weight: bold;
+}
