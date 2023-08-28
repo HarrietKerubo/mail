@@ -41,35 +41,39 @@ function load_mailbox(mailbox) {
     mailbox.charAt(0).toUpperCase() + mailbox.slice(1)
   }</h3>`;
 
-  let emailID = " ";
-  let emailRecipient = " ";
-  let emailSender = " ";
-  let emailSubject = " ";
-  let emailBody = " ";
+  // let emailID = " ";
+  // let emailRecipient = " ";
+  // let emailSender = " ";
+  // let emailSubject = " ";
+  // let emailBody = " ";
   let mails = " ";
 
   fetch(`/emails/${mailbox}`)
     .then((response) => response.json())
     .then((email) => {
       for (let i = 0; i < email.length; i++) {
-        emailID = `${email[i].id} `;
-        emailRecipient = `${email[i].recipients[0]} `;
-        emailSender = `${email[i].sender} `;
-        emailSubject = `${email[i].subject}`;
-        emailBody = `${email[i].body}`;
-        emailTimestamp = `${email[i].timestamp}`;
-        mails += `<div> <li> Sender : ${emailSender} Subject: ${emailSubject} Time: ${emailTimestamp} </li> </div>`;
+        const emailID = `${email[i].id} `;
+        const emailRecipient = `${email[i].recipients[0]} `;
+        const emailSender = `${email[i].sender} `;
+        const emailSubject = `${email[i].subject}`;
+        const emailBody = `${email[i].body}`;
+        const emailTimestamp = `${email[i].timestamp}`;
+        const isRead = email[i].read;
+
+        const emailClass = isRead ? "read-email" : "unread-email";
+
+        mails += `<div class="mail-border ${emailClass}"> 
+        <li>
+        <span class="sender">${emailSender} </span>
+        <span class="subject">${emailSubject} </span>
+        <span class="time"> ${emailTimestamp} </span>
+        </li> 
+        </div>`;
       }
 
       let emailsEl = document.querySelector("#emails-view");
-      console.log(emailsEl);
       emailsEl.innerHTML += mails;
-      // console.log(email);
-      // console.log(emailID);
-      // console.log(emailRecipient);
-      // console.log(emailSender);
-      // console.log(emailSubject);
-      // console.log(emailBody);
+      console.log(email);
     });
 }
 
@@ -85,12 +89,13 @@ function send_mail(recipients, subject, body) {
     .then((response) => response.json())
     .then((result) => {
       // Print result
-      // alert(result.message);
-      alert(result.error);
+      alert(result.message);
+
       load_mailbox("sent");
     })
     .catch((error) => {
       // Handle any errors that occur during the fetch
       console.error("Fetch error:", error);
+      alert(result.error);
     });
 }

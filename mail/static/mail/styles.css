@@ -1,3 +1,43 @@
 textarea {
     min-height: 400px;
 }
+
+.mail-border {
+    border: solid 1px;
+    padding: 10px;
+    font-size: larger;
+}
+
+li {
+    list-style-type: none;
+    display: flex;
+    flex-wrap: wrap;
+   
+}
+
+.sender{
+    font-weight: bold;
+    padding-right: 1.5rem;
+    display: flexbox;
+    width: 23%
+
+}
+
+.subject{
+    font-family: Arial, Helvetica, sans-serif;
+    width: 57%;
+}
+
+.time{
+    text-align: right;
+    color: gray;
+    width: 20%;
+}
+
+.read-email {
+background-color: lightgrey;
+}
+
+.unread-email{
+    background-color: white;
+}
