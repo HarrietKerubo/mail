@@ -132,6 +132,13 @@ function view_email(id, recipient, sender, subject, body, timestamp) {
   document.querySelector("#emails-view").style.display = "none";
   document.querySelector("#compose-view").style.display = "none";
 
+  fetch(`/emails/${id}`, {
+    method: "PUT",
+    body: JSON.stringify({
+      read: true,
+    }),
+  });
+
   fetch(`/emails/${id}`)
     .then((response) => response.json())
     // pass the attributes that you got from function load_mail and then declare an anonymous function () to execute required code
