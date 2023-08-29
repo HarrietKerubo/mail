@@ -33,11 +33,10 @@ function compose_email() {
 }
 
 function load_mailbox(mailbox) {
-  // Show the mailbox and hide other views
+  // Show the mailboxpadding-bottom: 20px  and hide other views
   document.querySelector("#emails-view").style.display = "block";
   document.querySelector("#compose-view").style.display = "none";
   document.querySelector("#display-view").style.display = "none";
-
   // Show the mailbox name
   document.querySelector("#emails-view").innerHTML = `<h3>${
     mailbox.charAt(0).toUpperCase() + mailbox.slice(1)
@@ -73,10 +72,13 @@ function load_mailbox(mailbox) {
         data-subject = "${emailSubject}"
         data-body = "${emailBody}"
         data-timestamp = "${emailTimestamp}"
+        data-mailbox = "${mailbox}"
         > 
         <li>
+        <div class="mail-header">
         <span class="sender">${emailSender} </span>
         <span class="subject">${emailSubject} </span>
+        </div>
         <span class="time"> ${emailTimestamp} </span>
         </li> 
         </div>`;
@@ -96,7 +98,17 @@ function load_mailbox(mailbox) {
           body = item.getAttribute("data-body");
           timestamp = item.getAttribute("data-timestamp");
 
-          view_email(emailID, recipient, sender, subject, body, timestamp);
+          let mailBox = item.getAttribute("data-mailbox");
+
+          view_email(
+            emailID,
+            recipient,
+            sender,
+            subject,
+            body,
+            timestamp,
+            mailbox
+          );
         });
       });
     });
@@ -126,9 +138,10 @@ function send_mail(recipients, subject, body) {
 }
 
 // function view_email(id, sender, recipient, subject, body, timestamp) {
-function view_email(id, recipient, sender, subject, body, timestamp) {
+function view_email(id, recipient, sender, subject, body, timestamp, mailbox) {
   // Show the email display and hide other views
-  document.querySelector("#display-view").style.display = "block";
+  let displayEl = document.querySelector("#display-view");
+  displayEl.style.display = "block";
   document.querySelector("#emails-view").style.display = "none";
   document.querySelector("#compose-view").style.display = "none";
 
@@ -149,7 +162,7 @@ function view_email(id, recipient, sender, subject, body, timestamp) {
       subject,
       timestamp,
       () => {
-        document.querySelector("#display-view").innerHTML = `
+        displayEl.innerHTML = `
         <div id="meta-data">
         <div> 
         <span class="title"> From: </span>
@@ -165,8 +178,46 @@ function view_email(id, recipient, sender, subject, body, timestamp) {
         <input id="reply-btn" type="button" class="btn btn-primary" value="Reply" />
         </div>
         <hr />
-        <div style="font-size: 20px"> ${body} </div>
+        <div style="font-size: 20px; padding-bottom: 10px ;"> ${body} </div>
+        
         `;
+        if (mailbox === "inbox") {
+          displayEl.innerHTML += `<div> 
+    <input id="archive-btn" type="button" class="btn btn-primary" value="Archive Email" />
+    </div>`;
+          document
+            .querySelector("#archive-btn")
+            .addEventListener("click", () => archive_mail(id));
+        } else if (mailbox === "archive") {
+          displayEl.innerHTML += `<div> 
+          <input id="archive-btn" type="button" class="btn btn-primary" value="Unarchive Email" />
+          </div>`;
+          document
+            .querySelector("#archive-btn")
+            .addEventListener("click", () => unarchive_mail(id));
+        }
       })
     );
+}
+
+function archive_mail(id) {
+  fetch(`/emails/${id}`, {
+    method: "PUT",
+    body: JSON.stringify({
+      archived: true,
+    }),
+  }).then(() => {
+    load_mailbox("inbox");
+  });
+}
+
+function unarchive_mail(id) {
+  fetch(`/emails/${id}`, {
+    method: "PUT",
+    body: JSON.stringify({
+      archived: false,
+    }),
+  }).then(() => {
+    load_mailbox("inbox");
+  });
 }
