@@ -10,26 +10,45 @@ document.addEventListener("DOMContentLoaded", function () {
     .querySelector("#archived")
     .addEventListener("click", () => load_mailbox("archive"));
   document.querySelector("#compose").addEventListener("click", compose_email);
+
+  document.querySelector("#submit-btn").addEventListener("click", () => {
+    const recipientEl = document.querySelector("#compose-recipients");
+    const subjectEl = document.querySelector("#compose-subject");
+    const bodyEl = document.querySelector("#compose-body");
+    send_mail(recipientEl, subjectEl, bodyEl);
+  });
   // By default, load the inbox
   load_mailbox("inbox");
 });
 
-function compose_email() {
-  // Show compose view and hide other views
+function compose_email(
+  replyRecipient,
+  replySubject,
+  replyTimestamp,
+  replyBody
+) {
+  // Show compose view and hide other viewsvalue
   document.querySelector("#emails-view").style.display = "none";
   document.querySelector("#compose-view").style.display = "block";
-  document.querySelector("#display-view").style.display = "none";
-  let recipients = document.querySelector("#compose-recipients");
-  let subject = document.querySelector("#compose-subject");
-  let body = document.querySelector("#compose-body");
-  // Clear out composition fields
-  recipients.value = "";
-  subject.value = "";
-  body.value = "";
+  document.querySelector("#display-view").style.divaluesplay = "none";
+  const recipientEl = document.querySelector("#compose-recipients");
+  const subjectEl = document.querySelector("#compose-subject");
+  const bodyEl = document.querySelector("#compose-body");
+  if ((replyRecipient, replySubject, replyTimestamp, replyBody)) {
+    recipientEl.value = replyRecipient;
+    if (!replySubject.startsWith("Re:")) {
+      subjectEl.value = `Re: ${replySubject}`;
+    } else {
+      subjectEl.value = replySubject;
+    }
 
-  document
-    .querySelector("#submit-btn")
-    .addEventListener("click", () => send_mail(recipients, subject, body));
+    bodyEl.placeholder = `On ${replyTimestamp} ${replyRecipient} wrote: ${replyBody}`;
+  } else {
+    // Clear out composition fields
+    recipientEl.value = "";
+    subjectEl.value = "";
+    bodyEl.value = "";
+  }
 }
 
 function load_mailbox(mailbox) {
@@ -86,7 +105,6 @@ function load_mailbox(mailbox) {
 
       let emailsEl = document.querySelector("#emails-view");
       emailsEl.innerHTML += mails;
-      console.log(email);
 
       const allMails = document.querySelectorAll(".mail-border");
       allMails.forEach((item) => {
@@ -161,6 +179,7 @@ function view_email(id, recipient, sender, subject, body, timestamp, mailbox) {
       sender,
       subject,
       timestamp,
+      body,
       () => {
         displayEl.innerHTML = `
         <div id="meta-data">
@@ -179,8 +198,8 @@ function view_email(id, recipient, sender, subject, body, timestamp, mailbox) {
         </div>
         <hr />
         <div style="font-size: 20px; padding-bottom: 10px ;"> ${body} </div>
-        
-        `;
+        <div> 
+         `;
         if (mailbox === "inbox") {
           displayEl.innerHTML += `<div> 
     <input id="archive-btn" type="button" class="btn btn-primary" value="Archive Email" />
@@ -196,6 +215,12 @@ function view_email(id, recipient, sender, subject, body, timestamp, mailbox) {
             .querySelector("#archive-btn")
             .addEventListener("click", () => unarchive_mail(id));
         }
+
+        document
+          .querySelector("#reply-btn")
+          .addEventListener("click", () =>
+            compose_email(sender, subject, timestamp, body)
+          );
       })
     );
 }
